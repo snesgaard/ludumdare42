@@ -3,26 +3,14 @@ local rng = love.math.random
 
 local function create_actor_state()
     return dict{
-        health = dict{
-            max = dict{}, current = dict{}
-        },
-        ability = dict{},
-        power = dict{},
-        defense = dict{},
-        agility = dict{},
-        armor = dict{},
-        shield = dict{},
-        charge = dict{},
-        script = dict{},
-        name = dict{}
+
     }
 end
 
 
 local function create_events()
     return dict{
-        on_damage = Event.create(),
-        on_heal = Event.create(),
+
     }
 end
 
@@ -30,9 +18,9 @@ end
 local State = {}
 State.__index = State
 
-function State:create()
-    self.actor = create_actor_state()
-    self.event = create_events()
+function State:create(actor_state, events)
+    self.actor = actor_state() or dict{}
+    self.event = events() or dict{}
     self.stat_events = dict{}
 end
 
@@ -119,78 +107,5 @@ function State:monitor_stat(path, callback, id)
     return e:listen(callback)
 end
 
-function State:is_alive(id)
-    local hp = self.actor.health.current[id]
-    return hp and hp > 0
-end
-
-function State:damage(attacker, defender, damage)
-    local agi_a = self:get_stat("agility", attacker) or 0
-    local agi_d = self:get_stat("agility", defender) or 0
-
-    local crit_chance = (agi_a - agi_d) / 10.0
-    local miss_chance = (agi_d - agi_a) / 10.0
-
-    local crit = crit_chance > rng()
-    local miss = miss_chance > rng()
-
-    local power = self.actor.power[attacker]
-    local armor = self:get_stat("armor", defender) or 0
-
-    local charge = self:get_stat("charge", attacker) or 0
-    local s = charge > 0 and 2 or 1
-    local shield = self:get_stat("shield", defender) or 0
-    s = shield > 0 and 0 or s
-    s = miss and 0 or s
-    s = crit and s * 2 or s
-
-    damage = math.max(0, s * (damage + power) - armor)
-    local hp = self.actor.health.current[defender]
-    local next_hp = math.max(0, hp - damage)
-
-    self:set_stat("charge", attacker, 0)
-    if not miss then
-        self:set_stat("shield", defender, 0)
-    end
-    self:set_stat("health/current", defender, next_hp)
-
-    local effective_damage = hp - next_hp
-
-    local info = dict{
-        attacker = attacker,
-        defender = defender,
-        damage = effective_damage,
-        charged = charge > 0,
-        shielded = shield > 0,
-        miss = miss,
-        crit = crit,
-    }
-
-    self.event.on_damage(info)
-
-    return info
-end
-
-function State:heal(caster, target, heal)
-    local power = self.actor.power[caster] or 0
-    heal = math.max(0, heal + power)
-    local hp = self.actor.health.current[target]
-    local max_hp = self.actor.health.max[target]
-    local next_hp = math.clamp(hp + heal, 0, max_hp)
-
-    self:set_stat("health/current", target, next_hp)
-
-    local effective_heal = next_hp - hp
-
-    local info = dict{
-        caster = caster,
-        target = target,
-        heal = effective_heal
-    }
-
-    self.event.on_heal(info)
-
-    return info
-end
 
 return State

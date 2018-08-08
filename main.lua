@@ -81,16 +81,15 @@ function love.load(arg)
     nodes.root = process.create(root_node)
 
     local old_load = love.load
-    local entry = arg[1] or "battle"
+    local entry = arg[1] or "actor"
     log.info("Entering %s", entry)
 
     entry = entry:gsub('/', '')
 
     local entrymap = {
-        battle = "designer/battle",
         sfx = "designer/sfx",
-        ability = "designer/ability",
-        level = "designer/level"
+        level = "designer/level",
+        actor = "designer/actor"
     }
 
     entry = entrymap[entry]
