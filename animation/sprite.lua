@@ -100,6 +100,8 @@ function Sprite:set_animation(a)
                 self.active = nil
             end
         )
+    else
+        log.warn("Animation %s was not found", a)
     end
     return self
 end
@@ -133,7 +135,7 @@ function Sprite.create(atlas)
         origin = 'origin',
         spatial = Spatial.create(),
         color = {1, 1, 1, 1},
-        scale = 2,
+        scale = 1,
         on_user = Event.create(),
         on_loop = Event.create(),
         shake_data = {amp = 0, phase = 0}

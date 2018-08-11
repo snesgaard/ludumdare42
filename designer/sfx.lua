@@ -12,7 +12,6 @@ function love.load(arg)
     if not nodes.holder then
         --love.window.setMode(500, 800)
     end
-    game.setup.init_battle()
     nodes.holder = process.create()
 
     for _, path in ipairs(arg) do

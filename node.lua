@@ -60,7 +60,7 @@ function Node:set_order(order_func)
     self.__order_func = order_func or temporal_order
 end
 
-function Node:update(dt)
+function Node:update(dt, ...)
     Timer.update(dt, self.__group.tween)
     local f, b = self.__threads2update.front, self.__threads2update.back
     self.__threads2update.front = b
@@ -72,10 +72,10 @@ function Node:update(dt)
             log.error(msg)
         end
     end
-    self:__update(dt)
+    self:__update(dt, ...)
 
     for _, node in ipairs(self.__node_order) do
-        node:update(dt)
+        node:update(dt, ...)
     end
 end
 
@@ -140,13 +140,13 @@ function Node:set_state(state, ...)
     if not state then return self end
 
     if self.__state and self.__state.exit then
-        self.__state.exit(self, state)
+        self.__state.exit(self, ...)
     end
 
     local prev_state = self.__state
     self.__state = state
     if state.enter then
-        state.enter(self, prev_state, ...)
+        state.enter(self, ...)
     end
 
     return self

@@ -1,6 +1,5 @@
 lume = require "modules/lume"
 local lurker = require "modules/lurker"
-local level_node = require "game/level"
 local setup = require "game/setup"
 
 function reload(p)
@@ -14,6 +13,7 @@ function love.load(args)
 
     local level = args:head()
     if level then
+        local level_node = require "game/level"
         nodes.level = process.create(level_node, level)
     end
 
@@ -30,23 +30,25 @@ function love.load(args)
     end
 end
 
+pause = false
+
+nodes.root.keypressed:listen(function(key)
+    if key == "tab" then
+        pause = not pause
+    end
+end)
+
 function love.update(dt)
     lurker:update()
-    Timer.update(dt)
-    for _, n in pairs(nodes) do
-        n:update(dt)
+    if not pause then
+        Timer.update(dt)
+        for _, n in pairs(nodes) do
+            n:update(dt)
+        end
     end
 end
 
 
 function love.draw()
     nodes.level:draw(0, 0)
-    for id, s in pairs(visual.sprite) do
-        local pos = nodes.actor_state:get_stat("spatial", id) or spatial(0, 0)
-        if type(s) == "table" then
-            s:draw(pos.x, pos.y)
-        elseif type(s) == "function" then
-            s(id, pos.x, pos.y)
-        end
-    end
 end

@@ -435,7 +435,45 @@ function Map:addNewLayerTile(layer, tile, x, y)
 	end
 
 	self.tileInstances[tile.gid] = self.tileInstances[tile.gid] or {}
+
 	table.insert(self.tileInstances[tile.gid], tab)
+
+	local i = x + y * layer.width
+
+	layer.__tile2index = layer.__tile2index or {}
+	layer.__tile2index[i] = #self.tileInstances[tile.gid]
+end
+
+function Map:addLayerTile(layer, tile, x, y)
+	local i = x + y * layer.width
+	local t2i = layer.__tile2index or {}
+	local index = t2i[i]
+
+	local tab = self.tileInstances[tile.gid] or {}
+	tab = tab[index] or {}
+
+	if not tab or not index then
+		return self:addNewLayerTile(layer, tile, x, y)
+	else
+		tab.batch:set(
+			tab.id, tile.quad, tab.x, tab.y, tab.r, tile.sx, tile.sy
+		)
+	end
+end
+
+function Map:removeLayerTile(layer, x, y)
+	local i = x + y * layer.width
+	local t2i = layer.__tile2index or {}
+	local index = t2i[i]
+	local tile = layer.data[y][x]
+
+	if not index then return end
+
+	local tab = self.tileInstances[tile.gid][index]
+
+	if not tab then return end
+
+	tab.batch:set(tab.id, 0, 0, 0, 0, 0)
 end
 
 --- Batch Tiles in Tile Layer for improved draw speed
@@ -542,7 +580,7 @@ function Map:setObjectSpriteBatches(layer)
 
 			batches[tileset] = batches[tileset] or newBatch(image)
 
-			local sx =  object.width / tile.width 
+			local sx =  object.width / tile.width
 			local sy =  object.height / tile.height
 
 			local batch = batches[tileset]

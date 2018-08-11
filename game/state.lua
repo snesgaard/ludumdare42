@@ -66,9 +66,13 @@ end
 function State:get_stat(path, id)
     local stat = get_stat_table(get_path_parts(path), self.actor)
     if type(stat) == "table" then
-        return stat[id]
+        if id then
+            return stat[id]
+        else
+            return stat
+        end
     else
-        log.warn("Stat %s does not exist", path)
+        --log.warn("Stat %s does not exist", path)
         return
     end
 end

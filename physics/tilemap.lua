@@ -2,7 +2,7 @@ local TileMap = {}
 TileMap.__index = TileMap
 
 local TileTypes = {
-    Full = 1,
+    FULL = 1,
     LEDGE = 2,
 }
 
@@ -11,7 +11,8 @@ function TileMap.create(size, tilesize)
         size = size,
         tilesize = tilesize,
         data = {},
-        pos = vec2(0, 0)
+        pos = vec2(0, 0),
+        types = TileTypes
     }
     return setmetatable(this, TileMap)
 end
@@ -34,7 +35,7 @@ function TileMap.from_tiled(map, layer_name)
     for x = 1, size.x do
         for y = 1, size.y do
             if layer.data[y][x] then
-                phys_map:insert(x - 1, y - 1, TileTypes.LEDGE)
+                phys_map:insert(x - 1, y - 1, TileTypes.FULL)
             end
         end
     end
@@ -60,7 +61,7 @@ function TileMap:remove(x, y)
     return self
 end
 
-function TileMap:move(box, v, callback_x, callback_y, ignore_ledge)
+function TileMap:move(box, v, ignore_ledge)
     local p = vec2(0, 0)
     local final_v = vec2(0, 0)
     if v.x < 0 then
@@ -79,14 +80,7 @@ function TileMap:move(box, v, callback_x, callback_y, ignore_ledge)
 
     local box = box:move(0, p.y - box.y)
 
-    if col_x and callback_x then
-        callback_x(box)
-    end
-    if col_y and callback_y then
-        callback_y(box)
-    end
-
-    return box
+    return box, col_x, col_y
 end
 
 local function valid_tile(map, x, y)
@@ -112,7 +106,6 @@ function TileMap:__pos_motion_x(box, v)
         math.min(self.size.x - 1, stop_index.x),
         math.min(self.size.y - 1, stop_index.y)
     )
-
 
     for x = init_index.x, stop_index.x do
         for y = init_index.y, stop_index.y do
@@ -173,7 +166,6 @@ function TileMap:__pos_motion_y(box, v, ignore_ledge)
             return true
         end
 
-        print(ignore_ledge)
 
         if t == TileTypes.LEDGE and not ignore_ledge then
             local world = self:__index2pos(vec2(x, y))
@@ -217,6 +209,24 @@ function TileMap:__neg_motion_y(box, v)
     return box.y + v.y, false
 end
 
+function TileMap:rectangle(x, y, w, h)
+    local start_index = self:__pos2index(vec2(x, y))
+    local stop_index = self:__pos2index(vec2(x + w, y + h))
+
+    local function get_collided()
+        for x = start_index.x, stop_index.x do
+            for y = start_index.y, stop_index.y do
+                if valid_tile(self, x, y) then
+                    return true
+                end
+            end
+        end
+        return false
+    end
+
+    return start_index, stop_index, get_collided()
+end
+
 function TileMap:index(x, y)
     return self.data[x + y * self.size.x]
 end
@@ -238,7 +248,7 @@ function TileMap:draw(_x, _y)
     local function draw(x, y)
         x = _x + self.pos.x + x * w
         y = _y + self.pos.y + y * h
-        gfx.rectangle("fill", x, y, w, h)
+        gfx.rectangle("line", x, y, w, h)
     end
 
     for x = 0, self.size.x - 1 do
