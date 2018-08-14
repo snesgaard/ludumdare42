@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" nextobjectid="4">
+ <tileset firstgid="1" name="atlas" tilewidth="32" tileheight="32" tilecount="2">
+  <image source="../../tiles/atlas.png" width="64" height="32"/>
+ </tileset>
+ <layer name="phantom" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwVAHAAfQAAE=
+  </data>
+ </layer>
+ <layer name="geometry" width="25" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYmBgYKIDpiUYtWPUjlE7Ru0YtWPUjsFuB60xAKkmAK0=
+  </data>
+ </layer>
+ <objectgroup name="actor">
+  <properties>
+   <property name="boss" value="wizard"/>
+   <property name="player" value="test"/>
+  </properties>
+  <object id="1" name="test" type="test" x="96" y="482" width="62" height="122"/>
+  <object id="2" name="wizard" type="wizard" x="591" y="491" width="62" height="113">
+   <properties>
+    <property name="boss" value="sphere"/>
+    <property name="player" value="test"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

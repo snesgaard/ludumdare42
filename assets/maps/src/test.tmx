@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="60" height="34" tilewidth="32" tileheight="32" nextobjectid="18">
+ <tileset firstgid="1" name="atlas" tilewidth="32" tileheight="32" tilecount="2">
+  <image source="../../tiles/atlas.png" width="64" height="32"/>
+ </tileset>
+ <layer name="phantom" width="60" height="34">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20ND6AAAAAAAAAAgHcDH+AAAQ==
+  </data>
+ </layer>
+ <layer name="geometry" width="60" height="34">
+  <data encoding="base64" compression="zlib">
+   eJztzwEJADAQxLBn/kXPR66BCui7uzfWin5t/dr6tfVr69fWr61fW7+2fm392vq19Wvr19avrV/b6u9SHw0ZAXE=
+  </data>
+ </layer>
+ <objectgroup name="actor">
+  <object id="1" name="test" type="test" x="156" y="962" width="68" height="88"/>
+  <object id="5" type="blast" x="1016.27" y="131.182" width="84" height="116" visible="0"/>
+  <object id="9" type="blast" x="1494.36" y="145.03" width="84" height="116" visible="0"/>
+  <object id="10" type="blast" x="270" y="108.667" width="84" height="116" visible="0"/>
+  <object id="11" type="blast" x="655.333" y="115.333" width="84" height="116" visible="0"/>
+  <object id="12" type="blast" x="328" y="310" width="84" height="116" visible="0"/>
+  <object id="13" type="blast" x="1184" y="308" width="84" height="116" visible="0"/>
+  <object id="14" type="blast" x="1630" y="344" width="84" height="116" visible="0"/>
+  <object id="15" type="blast" x="952" y="360" width="84" height="116" visible="0"/>
+  <object id="17" name="wizard" type="wizard" x="1700" y="116" width="102" height="146"/>
+ </objectgroup>
+</map>
